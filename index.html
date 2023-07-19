@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./node_modules/@picocss/pico/css/pico.min.css">
+  <title>Pi Dashboard</title>
+  <style>
+    .minimal {
+      padding: 40px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="container minimal">
+    <hgroup>
+      <h1>Pi Dashboard</h1>
+      <h2>Automation & more</h2>
+    </hgroup>
+
+    <a href="#">Admin</a>
+  </header>
+
+  <main class="container minimal">
+    <section>
+      <h2>ServArr</h2>
+
+      <ul>
+        <li>
+          Movies:
+          <a href="#">Radarr</a>
+        </li>
+
+        <li>
+          TV Shows:
+          <a href="#">Sonarr</a>
+        </li>
+
+        <li>
+          Subtitles:
+          <a href="#">Bazarr</a>
+        </li>
+      </ul>
+
+      <section>
+        <h2>Utilities</h2>
+
+        <ul>
+          <li>
+            Torrent Client:
+            <a href="#">qBittorrent</a>
+          </li>
+
+          <li>
+            Indexer:
+            <a href="#">Prowlarr</a>
+          </li>
+
+          <li>
+            Captcha Solver:
+            <a href="#">FlareSolverr</a>
+          </li>
+        </ul>
+      </section>
+    </section>
+
+    <section>
+      <h2>Minecraft</h2>
+
+      <p id="server-status-text" aria-busy="true">
+        Checking server status...
+      </p>
+
+      <details id="server-status-details" hidden="true">
+        <summary role="button" class="secondary">Details</summary>
+        <div id="server-status-version"></div>
+        <div id="server-status-players"></div>
+      </details>
+
+      <button id="server-status-button">
+        Check Status
+      </button>
+
+      <button id="server-start-button">
+        Start Server
+      </button>
+    <section>
+  </main>
+
+  <script type="module" src="./index.js"></script>
+</body>
+
+</html>
