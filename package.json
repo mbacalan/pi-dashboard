@@ -4,12 +4,13 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server.js"
   },
   "dependencies": {
+    "@fastify/websocket": "^8.2.0",
     "@picocss/pico": "^1.5.10",
     "fastify": "^4.20.0",
     "minecraft-protocol": "^1.43.2"
