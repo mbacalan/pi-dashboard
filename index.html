@@ -4,12 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="./node_modules/@picocss/pico/css/pico.min.css">
+  <link rel="stylesheet" href="./index.css">
   <title>Pi Dashboard</title>
-  <style>
-    .minimal {
-      padding: 40px 0;
-    }
-  </style>
 </head>
 
 <body>
@@ -76,6 +72,9 @@
         <summary role="button" class="secondary">Details</summary>
         <div id="server-status-version"></div>
         <div id="server-status-players"></div>
+        <div id="server-status-log" class="log">
+          <p>Terminal output is empty</p>
+        </div>
       </details>
 
       <button id="server-status-button">

@@ -4,6 +4,8 @@ const serverStatusText = document.getElementById("server-status-text")
 const serverStatusDetails = document.getElementById("server-status-details")
 const serverStatusVersion = document.getElementById("server-status-version")
 const serverStatusPlayers = document.getElementById("server-status-players")
+const serverStatusLog = document.getElementById("server-status-log")
+
 let wsOpen = false
 const ws = new WebSocket('ws://192.168.178.251:3000/server');
 
@@ -45,20 +47,21 @@ function handleServerStatus({ online, error }) {
   }
 
   if (!online) {
-    serverStatusText.innerText = "🔴 Server is NOT running"
+    serverStatusText.innerText = "🔴 Server is not running"
     return
   }
 
   if (online) {
     serverStatusText.innerText = "🟢 Server is running"
+    serverStartButton.innerText = "Stop Server"
     return
   }
 }
 
 function handleServerDetails(data) {
   serverStatusDetails.removeAttribute("hidden")
-  serverStatusVersion.innerHTML = `<p>Version: ${data.version.name}</p>`
-  serverStatusPlayers.innerHTML = `<p>Online: ${data.players.online}</p>`
+  serverStatusVersion.innerHTML = `<p>Version: ${data.version.name || "-"}</p>`
+  serverStatusPlayers.innerHTML = `<p>Online: ${data.players.online || "0"}</p>`
 }
 
 async function checkServerStatus() {
