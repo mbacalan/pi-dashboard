@@ -1,10 +1,13 @@
-const serverStartButton = document.getElementById("server-start-button")
-const serverStatusButton = document.getElementById("server-status-button")
-const serverStatusText = document.getElementById("server-status-text")
-const serverStatusDetails = document.getElementById("server-status-details")
-const serverStatusVersion = document.getElementById("server-status-version")
-const serverStatusPlayers = document.getElementById("server-status-players")
-const serverStatusLog = document.getElementById("server-status-log")
+const dom = {
+  serverStartButton: document.getElementById("server-start-button"),
+  serverStatusButton: document.getElementById("server-status-button"),
+  serverStatusText: document.getElementById("server-status-text"),
+  serverStatusDetails: document.getElementById("server-status-details"),
+  serverStatusVersion: document.getElementById("server-status-version"),
+  serverStatusPlayers: document.getElementById("server-status-players"),
+  serverStatusLog: document.getElementById("server-status-log"),
+  serverStatusLogEmpty: document.getElementById("server-status-log-empty"),
+}
 
 let wsOpen = false
 const ws = new WebSocket('ws://192.168.178.251:3000/server');
