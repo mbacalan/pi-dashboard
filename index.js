@@ -16,33 +16,76 @@ ws.onopen = () => {
   wsOpen = true
 };
 
-window.onload = async () => {
-  serverStatusButton.addEventListener("click", () => checkServerStatus())
-  serverStartButton.addEventListener("click", () => startServer())
 
-  await checkServerStatus()
+window.onload = async () => {
+  dom.serverStatusButton.addEventListener("click", () => checkServerStatus())
+  dom.serverStartButton.addEventListener("click", () => toggleServer())
 
   ws.onmessage = (event) => {
     const eventData = JSON.parse(event.data)
 
     if (eventData.message == "start" && eventData.event == "spawn") {
-      serverStatusDetails.removeAttribute("hidden")
+      onWsStartSpawn(eventData)
     }
 
     if (eventData.message == "start" && eventData.event == "data") {
-      const node = document.createElement("p")
-      node.innerText = eventData.data
-      serverStatusLog.removeChild(serverStatusLog.firstChild)
-      serverStatusLog.appendChild(node)
-      node.scrollIntoView({ behavior: "smooth" })
+      onWsStartData(eventData)
     }
 
-    console.log(eventData)
+    if (eventData.message == "status") {
+      onWsStatus(eventData)
+    }
+
+    if (eventData.message == "stop" && eventData.event == "data") {
+      onWsStop(eventData)
+    }
   };
 }
 
-function handleServerStatus({ online, error }) {
-  serverStatusText.setAttribute("aria-busy", false)
+function onWsStatus(eventData) {
+  try {
+    handleServerStatus({ online: eventData.online, error: false })
+
+    if (eventData.online) {
+      showServerDetails(eventData)
+    }
+  } catch (err) {
+    handleServerStatus({ online: false, error: true })
+  }
+}
+
+function onWsStartSpawn(eventData) {
+  if (eventData.success) {
+    handleServerStatus({ online: false, error: false, initiated: true })
+    return
+  }
+
+  handleServerStatus({ online: false, error: true })
+}
+
+function onWsStartData(eventData) {
+  const node = document.createElement("p")
+
+  dom.serverStatusDetails.removeAttribute("hidden")
+  node.innerText = eventData.data
+
+  if (dom.serverStatusLogEmpty) {
+    dom.serverStatusLogEmpty.remove()
+  }
+
+  dom.serverStatusLog.appendChild(node)
+  node.scrollIntoView({ behavior: "smooth" })
+
+  if (serverUpRegex.test(eventData.data)) {
+    handleServerStatus({ online: true, error: false })
+  }
+}
+
+function onWsStop(eventData) {
+  if (eventData.success) {
+    handleServerStatus({ online: false, error: false })
+  }
+}
 
   if (!online && error) {
     serverStatusText.innerText = "❌ Error checking server status"
