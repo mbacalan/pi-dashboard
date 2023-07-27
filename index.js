@@ -9,13 +9,16 @@ const dom = {
   serverStatusLogEmpty: document.getElementById("server-status-log-empty"),
 }
 
-let wsOpen = false
-const ws = new WebSocket('ws://192.168.178.251:3000/server');
+const serverUpRegex = /^\[\d{2}:\d{2}:\d{2} INFO\]: Done \(\d+\.\d+s\)! For help, type "help"\n$/;
 
+const ws = new WebSocket('ws://192.168.178.251:3000/server');
 ws.onopen = () => {
   wsOpen = true
+  checkServerStatus()
 };
 
+let wsOpen = false
+let serverRunning = false
 
 window.onload = async () => {
   dom.serverStatusButton.addEventListener("click", () => checkServerStatus())
@@ -87,57 +90,80 @@ function onWsStop(eventData) {
   }
 }
 
+function handleServerStatus({ online, error, initiated }) {
+  dom.serverStatusText.setAttribute("aria-busy", false)
+
+  if (!online && !error && initiated) {
+    dom.serverStatusText.innerText = "Starting server..."
+    dom.serverStartButton.innerText = "Start Server"
+    dom.serverStartButton.setAttribute("disabled", true)
+    dom.serverStatusDetails.setAttribute("hidden", true)
+    serverRunning = false
+    return
+  }
+
   if (!online && error) {
-    serverStatusText.innerText = "❌ Error checking server status"
+    dom.serverStatusText.innerText = "❌ Error checking server status"
+    dom.serverStartButton.innerText = "Start Server"
+    dom.serverStatusDetails.setAttribute("hidden", true)
+    serverRunning = false
     return
   }
 
   if (!online) {
-    serverStatusText.innerText = "🔴 Server is not running"
+    dom.serverStatusText.innerText = "🔴 Server is not running"
+    dom.serverStartButton.innerText = "Start Server"
+    dom.serverStatusDetails.setAttribute("hidden", true)
+    serverRunning = false
     return
   }
 
   if (online) {
-    serverStatusText.innerText = "🟢 Server is running"
-    serverStartButton.innerText = "Stop Server"
+    dom.serverStatusText.innerText = "🟢 Server is running"
+    dom.serverStartButton.innerText = "Stop Server"
+    dom.serverStartButton.removeAttribute("disabled")
+    serverRunning = true
     return
   }
 }
 
-function handleServerDetails(data) {
-  serverStatusDetails.removeAttribute("hidden")
-  serverStatusVersion.innerHTML = `<p>Version: ${data.version.name || "-"}</p>`
-  serverStatusPlayers.innerHTML = `<p>Online: ${data.players.online || "0"}</p>`
+function showServerDetails(data) {
+  dom.serverStatusDetails.removeAttribute("hidden")
+  dom.serverStatusVersion.innerHTML = `<p>Version: ${data.version.name || "-"}</p>`
+  dom.serverStatusPlayers.innerHTML = `<p>Online: ${data.players.online || "0"}</p>`
 }
 
-async function checkServerStatus() {
-  serverStatusText.innerText = "Checking server status..."
-  serverStatusText.setAttribute("aria-busy", true)
+function clearServerDetails() {
+  dom.serverStatusDetails.setAttribute("hidden", true)
+  dom.serverStatusVersion.innerHTML = ""
+  dom.serverStatusPlayers.innerHTML = ""
 
-  try {
-    const response = await fetch("http://192.168.178.251:3000/status")
+  do {
+    dom.serverStatusLog.removeChild(dom.serverStatusLog.firstChild)
+  } while (dom.serverStatusLog.firstChild)
+}
 
-    if (!response.ok) {
-      throw new Error("Network response was not OK");
-    }
+function checkServerStatus() {
+  dom.serverStatusText.innerText = "Checking server status..."
+  dom.serverStatusText.setAttribute("aria-busy", true)
 
-    const data = await response.json()
+  ws.send("status")
+}
 
-    handleServerStatus({ online: data.online, error: false })
-
-    if (data.online) {
-      handleServerDetails(data)
-    }
-
-    return
-  } catch (error) {
-    handleServerStatus({ online: false, error: true })
+function toggleServer() {
+  if (!wsOpen) {
     return
   }
-}
 
-function startServer() {
-  if (wsOpen) {
-    ws.send(serverRunning ? "stop" : "start")
+  if (!serverRunning) {
+    dom.serverStatusText.innerText = "Starting server..."
+    dom.serverStatusText.setAttribute("aria-busy", true)
+    ws.send("start")
+  }
+
+  if (serverRunning) {
+    dom.serverStatusText.innerText = "Stopping server..."
+    dom.serverStatusText.setAttribute("aria-busy", true)
+    ws.send("stop")
   }
 }
