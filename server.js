@@ -9,20 +9,10 @@ const fastify = Fastify({
   logger: true
 })
 
-await fastify.register(ws)
-
-fastify.get("/status", async function handler(_, reply) {
-  try {
-    const status = await MC.ping({ host: "192.168.178.251", port: "25565" })
-
-    reply.code(200).send({ online: true, ...status })
-  } catch(err) {
-    reply.code(200).send({ online: false, ...err })
-  }
-})
+fastify.register(ws)
 
 fastify.register(async function (fastify) {
-  fastify.get("/server", { websocket: true }, (connection, req) => {
+  fastify.get("/server", { websocket: true }, (connection) => {
     connection.socket.on("message", async message => {
       if (message == "start") {
         mcServerProcess = spawn('java', [
@@ -71,6 +61,16 @@ fastify.register(async function (fastify) {
         })
 
         mcServerProcess.kill()
+      }
+
+      if (message == "status") {
+        try {
+          const status = await MC.ping({ host: "192.168.178.251", port: "25565" })
+
+          connection.socket.send(JSON.stringify({ message: "status", online: true, ...status }))
+        } catch(err) {
+          connection.socket.send(JSON.stringify({ message: "status", online: false, ...err }))
+        }
       }
     })
   })
