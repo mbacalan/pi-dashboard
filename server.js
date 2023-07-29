@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import Fastify from "fastify";
 import ws from '@fastify/websocket'
 import MC from "minecraft-protocol"
@@ -9,10 +11,10 @@ const fastify = Fastify({
   logger: true
 })
 
-fastify.register(ws)
+await fastify.register(ws)
 
 fastify.register(async function (fastify) {
-  fastify.get("/server", { websocket: true }, (connection) => {
+  fastify.get("/", { websocket: true }, (connection) => {
     connection.socket.on("message", async message => {
       if (message == "start") {
         mcServerProcess = spawn('java', [
@@ -47,7 +49,7 @@ fastify.register(async function (fastify) {
         })
 
         mcServerProcess.on("error", (err) => {
-          connection.socket.send(JSON.stringify({ message: "start", event: "error", success: false, error: err }))
+          connection.socket.send(JSON.stringify({ message: "start", event: "spawn", success: false, error: err }))
         })
 
         mcServerProcess.stdout.on("data", (data) => {
@@ -77,7 +79,7 @@ fastify.register(async function (fastify) {
 })
 
 try {
-  await fastify.listen({ host: '192.168.178.251', port: 3000 })
+  await fastify.listen({ host: process.env.SERVER_HOST, port: 3000 })
 } catch (err) {
   fastify.log.error(err)
   process.exit(1)

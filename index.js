@@ -11,7 +11,7 @@ const dom = {
 
 const serverUpRegex = /^\[\d{2}:\d{2}:\d{2} INFO\]: Done \(\d+\.\d+s\)! For help, type "help"\n$/;
 
-const ws = new WebSocket('ws://192.168.178.251:3000/server');
+const ws = new WebSocket(`ws://${import.meta.env.VITE_API_URL}`);
 ws.onopen = () => {
   wsOpen = true
   checkServerStatus()
@@ -91,7 +91,7 @@ function onWsStop(eventData) {
 }
 
 function handleServerStatus({ online, error, initiated }) {
-  dom.serverStatusText.setAttribute("aria-busy", false)
+  dom.serverStatusText.setAttribute("aria-busy", initiated ?? false)
 
   if (!online && !error && initiated) {
     dom.serverStatusText.innerText = "Starting server..."
