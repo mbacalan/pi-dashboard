@@ -28,24 +28,24 @@ window.onload = async () => {
     const eventData = JSON.parse(event.data)
 
     if (eventData.message == "start" && eventData.event == "spawn") {
-      onWsStartSpawn(eventData)
+      onMCProcessSpawn(eventData)
     }
 
     if (eventData.message == "start" && eventData.event == "data") {
-      onWsStartData(eventData)
-    }
-
-    if (eventData.message == "status") {
-      onWsStatus(eventData)
+      onMCProcessStart(eventData)
     }
 
     if (eventData.message == "stop" && eventData.event == "data") {
-      onWsStop(eventData)
+      onMCProcessStop(eventData)
+    }
+
+    if (eventData.message == "status") {
+      onMCProcessStatusCheck(eventData)
     }
   };
 }
 
-function onWsStatus(eventData) {
+function onMCProcessStatusCheck(eventData) {
   try {
     handleServerStatus({ online: eventData.online, error: false })
 
@@ -57,7 +57,7 @@ function onWsStatus(eventData) {
   }
 }
 
-function onWsStartSpawn(eventData) {
+function onMCProcessSpawn(eventData) {
   if (eventData.success) {
     handleServerStatus({ online: false, error: false, initiated: true })
     return
@@ -66,7 +66,7 @@ function onWsStartSpawn(eventData) {
   handleServerStatus({ online: false, error: true })
 }
 
-function onWsStartData(eventData) {
+function onMCProcessStart(eventData) {
   const node = document.createElement("p")
 
   dom.serverStatusDetails.removeAttribute("hidden")
@@ -84,7 +84,7 @@ function onWsStartData(eventData) {
   }
 }
 
-function onWsStop(eventData) {
+function onMCProcessStop(eventData) {
   if (eventData.success) {
     handleServerStatus({ online: false, error: false })
   }
