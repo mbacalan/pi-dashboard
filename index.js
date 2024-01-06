@@ -46,24 +46,21 @@ window.onload = async () => {
 }
 
 function onProcessStatusCheck(eventData) {
-  try {
-    handleServerStatus({ online: eventData.online, error: false })
-
-    if (eventData.online) {
-      showServerDetails(eventData)
-    }
-  } catch (err) {
-    handleServerStatus({ online: false, error: true })
+  if (eventData.online) {
+    showServerDetails(eventData)
+    return
   }
+
+  handleServerStatusError()
 }
 
 function onProcessSpawn(eventData) {
   if (eventData.success) {
-    handleServerStatus({ online: false, error: false, initiated: true })
+    handleServerStart()
     return
   }
 
-  handleServerStatus({ online: false, error: true })
+  handleServerStatusError()
 }
 
 function onProcessStart(eventData) {
@@ -80,13 +77,13 @@ function onProcessStart(eventData) {
   node.scrollIntoView({ behavior: "smooth" })
 
   if (serverUpRegex.test(eventData.data)) {
-    handleServerStatus({ online: true, error: false })
+    handleServerOnline()
   }
 }
 
 function onProcessStop(eventData) {
   if (eventData.success) {
-    handleServerStatus({ online: false, error: false })
+    handleServerOffline()
     clearServerDetails()
   }
 }
@@ -108,6 +105,7 @@ function clearServerDetails() {
 }
 
 function handleServerStart() {
+  dom.serverStatusText.setAttribute("aria-busy", true)
   dom.serverStatusText.innerText = "Starting server..."
   dom.serverStartButton.innerText = "Start Server"
   disableServerStartButton();
@@ -117,6 +115,7 @@ function handleServerStart() {
 }
 
 function handleServerStatusError() {
+  dom.serverStatusText.setAttribute("aria-busy", false)
   dom.serverStatusText.innerText = "❌ Error checking server status"
   dom.serverStartButton.innerText = "Start Server"
   hideServerStatusDetails();
@@ -125,6 +124,7 @@ function handleServerStatusError() {
 }
 
 function handleServerOffline() {
+  dom.serverStatusText.setAttribute("aria-busy", false)
   dom.serverStatusText.innerText = "🔴 Server is not running"
   dom.serverStartButton.innerText = "Start Server"
   hideServerStatusDetails();
@@ -132,8 +132,8 @@ function handleServerOffline() {
   return
 }
 
-
 function handleServerOnline() {
+  dom.serverStatusText.setAttribute("aria-busy", false)
   dom.serverStatusText.innerText = "🟢 Server is running"
   dom.serverStartButton.innerText = "Stop Server"
   enableServerStartButton();
@@ -141,37 +141,16 @@ function handleServerOnline() {
   return
 }
 
+function hideServerStatusDetails() {
+  dom.serverStatusDetails.setAttribute("hidden", true)
+}
 
-function handleServerStatus({ online, error, initiated }) {
-  dom.serverStatusText.setAttribute("aria-busy", initiated ?? false)
+function disableServerStartButton() {
+  dom.serverStartButton.setAttribute("disabled", true)
+}
 
-  if (!online && !error && initiated) {
-    handleServerStart()
-  }
-
-  if (!online && error) {
-    handleServerStatusError();
-  }
-
-  if (!online) {
-    handleServerOffline();
-  }
-
-  if (online) {
-    handleServerOnline();
-  }
-
-  function hideServerStatusDetails() {
-    dom.serverStatusDetails.setAttribute("hidden", true)
-  }
-
-  function disableServerStartButton() {
-    dom.serverStartButton.setAttribute("disabled", true)
-  }
-
-  function enableServerStartButton() {
-    dom.serverStartButton.removeAttribute("disabled")
-  }
+function enableServerStartButton() {
+  dom.serverStartButton.removeAttribute("disabled")
 }
 
 function checkServerStatus() {
