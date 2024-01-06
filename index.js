@@ -21,8 +21,8 @@ ws.onopen = () => {
 };
 
 window.onload = async () => {
-  dom.serverStatusButton.addEventListener("click", () => checkServerStatus())
-  dom.serverStartButton.addEventListener("click", () => toggleServer())
+  dom.serverStatusButton.addEventListener("click", checkServerStatus)
+  dom.serverStartButton.addEventListener("click", toggleServer)
 
   ws.onmessage = (event) => {
     const eventData = JSON.parse(event.data)
