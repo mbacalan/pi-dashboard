@@ -28,24 +28,24 @@ window.onload = async () => {
     const eventData = JSON.parse(event.data)
 
     if (eventData.message == "start" && eventData.event == "spawn") {
-      onMCProcessSpawn(eventData)
+      onProcessSpawn(eventData)
     }
 
     if (eventData.message == "start" && eventData.event == "data") {
-      onMCProcessStart(eventData)
+      onProcessStart(eventData)
     }
 
-    if (eventData.message == "stop" && eventData.event == "data") {
-      onMCProcessStop(eventData)
+    if (eventData.message == "stop") {
+      onProcessStop(eventData)
     }
 
     if (eventData.message == "status") {
-      onMCProcessStatusCheck(eventData)
+      onProcessStatusCheck(eventData)
     }
   };
 }
 
-function onMCProcessStatusCheck(eventData) {
+function onProcessStatusCheck(eventData) {
   try {
     handleServerStatus({ online: eventData.online, error: false })
 
@@ -57,7 +57,7 @@ function onMCProcessStatusCheck(eventData) {
   }
 }
 
-function onMCProcessSpawn(eventData) {
+function onProcessSpawn(eventData) {
   if (eventData.success) {
     handleServerStatus({ online: false, error: false, initiated: true })
     return
@@ -66,7 +66,7 @@ function onMCProcessSpawn(eventData) {
   handleServerStatus({ online: false, error: true })
 }
 
-function onMCProcessStart(eventData) {
+function onProcessStart(eventData) {
   const node = document.createElement("p")
 
   dom.serverStatusDetails.removeAttribute("hidden")
@@ -84,10 +84,27 @@ function onMCProcessStart(eventData) {
   }
 }
 
-function onMCProcessStop(eventData) {
+function onProcessStop(eventData) {
   if (eventData.success) {
     handleServerStatus({ online: false, error: false })
+    clearServerDetails()
   }
+}
+
+function showServerDetails(data) {
+  dom.serverStatusDetails.removeAttribute("hidden")
+  dom.serverStatusVersion.innerHTML = `<p>Version: ${data.version.name || "-"}</p>`
+  dom.serverStatusPlayers.innerHTML = `<p>Online: ${data.players.online || "0"}</p>`
+}
+
+function clearServerDetails() {
+  dom.serverStatusDetails.setAttribute("hidden", true)
+  dom.serverStatusVersion.innerHTML = ""
+  dom.serverStatusPlayers.innerHTML = ""
+
+  do {
+    dom.serverStatusLog.removeChild(dom.serverStatusLog.firstChild)
+  } while (dom.serverStatusLog.firstChild)
 }
 
 function handleServerStatus({ online, error, initiated }) {
@@ -137,22 +154,6 @@ function handleServerStatus({ online, error, initiated }) {
   function enableServerStartButton() {
     dom.serverStartButton.removeAttribute("disabled")
   }
-}
-
-function showServerDetails(data) {
-  dom.serverStatusDetails.removeAttribute("hidden")
-  dom.serverStatusVersion.innerHTML = `<p>Version: ${data.version.name || "-"}</p>`
-  dom.serverStatusPlayers.innerHTML = `<p>Online: ${data.players.online || "0"}</p>`
-}
-
-function clearServerDetails() {
-  dom.serverStatusDetails.setAttribute("hidden", true)
-  dom.serverStatusVersion.innerHTML = ""
-  dom.serverStatusPlayers.innerHTML = ""
-
-  do {
-    dom.serverStatusLog.removeChild(dom.serverStatusLog.firstChild)
-  } while (dom.serverStatusLog.firstChild)
 }
 
 function checkServerStatus() {
