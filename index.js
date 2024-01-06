@@ -107,40 +107,58 @@ function clearServerDetails() {
   } while (dom.serverStatusLog.firstChild)
 }
 
+function handleServerStart() {
+  dom.serverStatusText.innerText = "Starting server..."
+  dom.serverStartButton.innerText = "Start Server"
+  disableServerStartButton();
+  hideServerStatusDetails();
+  serverRunning = false
+  return
+}
+
+function handleServerStatusError() {
+  dom.serverStatusText.innerText = "❌ Error checking server status"
+  dom.serverStartButton.innerText = "Start Server"
+  hideServerStatusDetails();
+  serverRunning = false
+  return
+}
+
+function handleServerOffline() {
+  dom.serverStatusText.innerText = "🔴 Server is not running"
+  dom.serverStartButton.innerText = "Start Server"
+  hideServerStatusDetails();
+  serverRunning = false
+  return
+}
+
+
+function handleServerOnline() {
+  dom.serverStatusText.innerText = "🟢 Server is running"
+  dom.serverStartButton.innerText = "Stop Server"
+  enableServerStartButton();
+  serverRunning = true
+  return
+}
+
+
 function handleServerStatus({ online, error, initiated }) {
   dom.serverStatusText.setAttribute("aria-busy", initiated ?? false)
 
   if (!online && !error && initiated) {
-    dom.serverStatusText.innerText = "Starting server..."
-    dom.serverStartButton.innerText = "Start Server"
-    disableServerStartButton();
-    hideServerStatusDetails();
-    serverRunning = false
-    return
+    handleServerStart()
   }
 
   if (!online && error) {
-    dom.serverStatusText.innerText = "❌ Error checking server status"
-    dom.serverStartButton.innerText = "Start Server"
-    hideServerStatusDetails();
-    serverRunning = false
-    return
+    handleServerStatusError();
   }
 
   if (!online) {
-    dom.serverStatusText.innerText = "🔴 Server is not running"
-    dom.serverStartButton.innerText = "Start Server"
-    hideServerStatusDetails();
-    serverRunning = false
-    return
+    handleServerOffline();
   }
 
   if (online) {
-    dom.serverStatusText.innerText = "🟢 Server is running"
-    dom.serverStartButton.innerText = "Stop Server"
-    enableServerStartButton();
-    serverRunning = true
-    return
+    handleServerOnline();
   }
 
   function hideServerStatusDetails() {
