@@ -164,7 +164,7 @@ function checkServerStatus() {
 
 function toggleServer() {
   if (!wsOpen) {
-    return
+    dom.serverStatusText.innerText = "WS connection failed, refresh and try again"
   }
 
   if (!serverRunning) {
