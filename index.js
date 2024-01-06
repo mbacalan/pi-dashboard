@@ -11,14 +11,14 @@ const dom = {
 
 const serverUpRegex = /^\[\d{2}:\d{2}:\d{2} INFO\]: Done \(\d+\.\d+s\)! For help, type "help"\n$/;
 
+let wsOpen = false
+let serverRunning = false
+
 const ws = new WebSocket(`ws://${import.meta.env.VITE_API_URL}`);
 ws.onopen = () => {
   wsOpen = true
   checkServerStatus()
 };
-
-let wsOpen = false
-let serverRunning = false
 
 window.onload = async () => {
   dom.serverStatusButton.addEventListener("click", () => checkServerStatus())
@@ -96,8 +96,8 @@ function handleServerStatus({ online, error, initiated }) {
   if (!online && !error && initiated) {
     dom.serverStatusText.innerText = "Starting server..."
     dom.serverStartButton.innerText = "Start Server"
-    dom.serverStartButton.setAttribute("disabled", true)
-    dom.serverStatusDetails.setAttribute("hidden", true)
+    disableServerStartButton();
+    hideServerStatusDetails();
     serverRunning = false
     return
   }
@@ -105,7 +105,7 @@ function handleServerStatus({ online, error, initiated }) {
   if (!online && error) {
     dom.serverStatusText.innerText = "❌ Error checking server status"
     dom.serverStartButton.innerText = "Start Server"
-    dom.serverStatusDetails.setAttribute("hidden", true)
+    hideServerStatusDetails();
     serverRunning = false
     return
   }
@@ -113,7 +113,7 @@ function handleServerStatus({ online, error, initiated }) {
   if (!online) {
     dom.serverStatusText.innerText = "🔴 Server is not running"
     dom.serverStartButton.innerText = "Start Server"
-    dom.serverStatusDetails.setAttribute("hidden", true)
+    hideServerStatusDetails();
     serverRunning = false
     return
   }
@@ -121,9 +121,21 @@ function handleServerStatus({ online, error, initiated }) {
   if (online) {
     dom.serverStatusText.innerText = "🟢 Server is running"
     dom.serverStartButton.innerText = "Stop Server"
-    dom.serverStartButton.removeAttribute("disabled")
+    enableServerStartButton();
     serverRunning = true
     return
+  }
+
+  function hideServerStatusDetails() {
+    dom.serverStatusDetails.setAttribute("hidden", true)
+  }
+
+  function disableServerStartButton() {
+    dom.serverStartButton.setAttribute("disabled", true)
+  }
+
+  function enableServerStartButton() {
+    dom.serverStartButton.removeAttribute("disabled")
   }
 }
 
