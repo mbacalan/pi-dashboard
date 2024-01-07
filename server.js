@@ -42,7 +42,7 @@ fastify.register(async function (fastify) {
           "-jar",
           "paper.jar",
           "--nogui",
-        ], { cwd: '/home/mb/minecraft' });
+        ], { cwd: process.env.MC_SERVER_DIR });
 
         mcServerProcess.once("spawn", () => {
           connection.socket.send(JSON.stringify({ message: "start", event: "spawn", success: true }))
@@ -67,7 +67,7 @@ fastify.register(async function (fastify) {
 
       if (message == "status") {
         try {
-          const status = await MC.ping({ host: "192.168.178.251", port: "25565" })
+          const status = await MC.ping({ host: process.env.MC_SERVER_URL, port: process.env.MC_SERVER_PORT })
 
           connection.socket.send(JSON.stringify({ message: "status", online: true, ...status }))
         } catch(err) {
