@@ -41,22 +41,75 @@ window.onload = async () => {
   };
 }
 
+class ServerStatusHandler {
+  constructor() {
+    this.online = false
+  }
+
+  handleStart() {
+    dom.serverStatusText.setAttribute("aria-busy", true)
+    dom.serverStatusText.innerText = "Starting server..."
+    dom.serverStartButton.innerText = "Start Server"
+    disableServerStartButton();
+    hideServerStatusDetails();
+    this.online = false
+  }
+
+  handleStatusError() {
+    dom.serverStatusText.setAttribute("aria-busy", false)
+    dom.serverStatusText.innerText = "❌ Error checking server status"
+    dom.serverStartButton.innerText = "Start Server"
+    hideServerStatusDetails();
+    this.online = false
+  }
+
+  handleOffline() {
+    dom.serverStatusText.setAttribute("aria-busy", false)
+    dom.serverStatusText.innerText = "🔴 Server is not running"
+    dom.serverStartButton.innerText = "Start Server"
+    hideServerStatusDetails();
+    this.online = false
+  }
+
+  handleOnline() {
+    dom.serverStatusText.setAttribute("aria-busy", false)
+    dom.serverStatusText.innerText = "🟢 Server is running"
+    dom.serverStartButton.innerText = "Stop Server"
+    enableServerStartButton();
+    this.online = true
+  }
+
+  _hideServerStatusDetails() {
+    dom.serverStatusDetails.setAttribute("hidden", true)
+  }
+
+  _disableServerStartButton() {
+    dom.serverStartButton.setAttribute("disabled", true)
+  }
+
+  _enableServerStartButton() {
+    dom.serverStartButton.removeAttribute("disabled")
+  }
+}
+
+const serverStatusHandler = new ServerStatusHandler()
+
 function onProcessStatusCheck(eventData) {
   if (eventData.online) {
     showServerDetails(eventData)
     return
   }
 
-  handleServerStatusError()
+  serverStatusHandler.handleStatusError()
 }
 
 function onProcessSpawn(eventData) {
   if (eventData.success) {
-    handleServerStart()
+    serverStatusHandler.handleStart()
     return
   }
 
-  handleServerStatusError()
+  serverStatusHandler.handleStatusError()
 }
 
 function onProcessStart(eventData) {
@@ -73,13 +126,13 @@ function onProcessStart(eventData) {
   node.scrollIntoView({ behavior: "smooth" })
 
   if (serverUpRegex.test(eventData.data)) {
-    handleServerOnline()
+    serverStatusHandler.handleOnline()
   }
 }
 
 function onProcessStop(eventData) {
   if (eventData.success) {
-    handleServerOffline()
+    serverStatusHandler.handleOffline()
     clearServerDetails()
   }
 }
@@ -98,55 +151,6 @@ function clearServerDetails() {
   do {
     dom.serverStatusLog.removeChild(dom.serverStatusLog.firstChild)
   } while (dom.serverStatusLog.firstChild)
-}
-
-function handleServerStart() {
-  dom.serverStatusText.setAttribute("aria-busy", true)
-  dom.serverStatusText.innerText = "Starting server..."
-  dom.serverStartButton.innerText = "Start Server"
-  disableServerStartButton();
-  hideServerStatusDetails();
-  serverRunning = false
-  return
-}
-
-function handleServerStatusError() {
-  dom.serverStatusText.setAttribute("aria-busy", false)
-  dom.serverStatusText.innerText = "❌ Error checking server status"
-  dom.serverStartButton.innerText = "Start Server"
-  hideServerStatusDetails();
-  serverRunning = false
-  return
-}
-
-function handleServerOffline() {
-  dom.serverStatusText.setAttribute("aria-busy", false)
-  dom.serverStatusText.innerText = "🔴 Server is not running"
-  dom.serverStartButton.innerText = "Start Server"
-  hideServerStatusDetails();
-  serverRunning = false
-  return
-}
-
-function handleServerOnline() {
-  dom.serverStatusText.setAttribute("aria-busy", false)
-  dom.serverStatusText.innerText = "🟢 Server is running"
-  dom.serverStartButton.innerText = "Stop Server"
-  enableServerStartButton();
-  serverRunning = true
-  return
-}
-
-function hideServerStatusDetails() {
-  dom.serverStatusDetails.setAttribute("hidden", true)
-}
-
-function disableServerStartButton() {
-  dom.serverStartButton.setAttribute("disabled", true)
-}
-
-function enableServerStartButton() {
-  dom.serverStartButton.removeAttribute("disabled")
 }
 
 function checkServerStatus() {
