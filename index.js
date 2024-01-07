@@ -94,6 +94,13 @@ class ServerStatusHandler {
 
 const serverStatusHandler = new ServerStatusHandler()
 
+function checkServerStatus() {
+  dom.serverStatusText.innerText = "Checking server status..."
+  dom.serverStatusText.setAttribute("aria-busy", true)
+
+  ws.send("status")
+}
+
 function onProcessStatusCheck(eventData) {
   if (eventData.online) {
     showServerDetails(eventData)
@@ -151,13 +158,6 @@ function clearServerDetails() {
   do {
     dom.serverStatusLog.removeChild(dom.serverStatusLog.firstChild)
   } while (dom.serverStatusLog.firstChild)
-}
-
-function checkServerStatus() {
-  dom.serverStatusText.innerText = "Checking server status..."
-  dom.serverStatusText.setAttribute("aria-busy", true)
-
-  ws.send("status")
 }
 
 function toggleServer() {
