@@ -50,8 +50,8 @@ class ServerStatusHandler {
     dom.serverStatusText.setAttribute("aria-busy", true)
     dom.serverStatusText.innerText = "Starting server..."
     dom.serverStartButton.innerText = "Start Server"
-    disableServerStartButton();
-    hideServerStatusDetails();
+    this._disableServerStartButton();
+    this._hideServerStatusDetails();
     this.online = false
   }
 
@@ -59,7 +59,7 @@ class ServerStatusHandler {
     dom.serverStatusText.setAttribute("aria-busy", false)
     dom.serverStatusText.innerText = "❌ Error checking server status"
     dom.serverStartButton.innerText = "Start Server"
-    hideServerStatusDetails();
+    this._hideServerStatusDetails();
     this.online = false
   }
 
@@ -67,7 +67,7 @@ class ServerStatusHandler {
     dom.serverStatusText.setAttribute("aria-busy", false)
     dom.serverStatusText.innerText = "🔴 Server is not running"
     dom.serverStartButton.innerText = "Start Server"
-    hideServerStatusDetails();
+    this._hideServerStatusDetails();
     this.online = false
   }
 
@@ -75,7 +75,7 @@ class ServerStatusHandler {
     dom.serverStatusText.setAttribute("aria-busy", false)
     dom.serverStatusText.innerText = "🟢 Server is running"
     dom.serverStartButton.innerText = "Stop Server"
-    enableServerStartButton();
+    this._enableServerStartButton();
     this.online = true
   }
 
