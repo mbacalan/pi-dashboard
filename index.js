@@ -104,10 +104,11 @@ function checkServerStatus() {
 function onProcessStatusCheck(eventData) {
   if (eventData.online) {
     showServerDetails(eventData)
+    serverStatusHandler.handleOnline()
     return
   }
 
-  serverStatusHandler.handleStatusError()
+  serverStatusHandler.handleOffline()
 }
 
 function onProcessSpawn(eventData) {
