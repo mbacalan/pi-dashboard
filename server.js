@@ -66,6 +66,11 @@ fastify.register(async function (fastify) {
       }
 
       if (message == "status") {
+        if (Object.keys(process.env).includes('MC_SERVER_DIR', 'MC_SERVER_URL', 'MC_SERVER_PORT') == false) {
+          connection.socket.send(JSON.stringify({ message: "status", event: "error", error: "Server environment vars are not set properly!" }))
+          return
+        }
+
         try {
           const status = await MC.ping({ host: process.env.MC_SERVER_URL, port: process.env.MC_SERVER_PORT })
 

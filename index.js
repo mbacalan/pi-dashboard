@@ -79,6 +79,15 @@ class ServerStatusHandler {
     this.online = true
   }
 
+  handleServerError(message) {
+    dom.serverStatusText.setAttribute("aria-busy", false)
+    dom.serverStatusText.innerText = `❌ ${message}` ?? "❌ An error occured on server!"
+    dom.serverStartButton.innerText = "Start Server"
+    this._hideServerStatusDetails();
+    this._disableServerStartButton();
+    this.online = false
+  }
+
   _hideServerStatusDetails() {
     dom.serverStatusDetails.setAttribute("hidden", true)
   }
@@ -102,6 +111,11 @@ function checkServerStatus() {
 }
 
 function onProcessStatusCheck(eventData) {
+  if (eventData.event == "error") {
+    serverStatusHandler.handleServerError(eventData?.error)
+    return
+  }
+
   if (eventData.online) {
     showServerDetails(eventData)
     serverStatusHandler.handleOnline()
