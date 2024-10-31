@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,7 +16,7 @@
       <h2>Automation & more</h2>
     </hgroup>
 
-    <a href="%VITE_ADMIN_URL%" target="_blank" referrerpolicy="noreferrer">Admin</a>
+    <a href="%VITE_ADMIN_URL%" target="_blank" referrerpolicy="no-referrer">Admin</a>
   </header>
 
   <main class="container minimal">
@@ -25,17 +26,17 @@
       <ul>
         <li>
           Movies:
-          <a href="%VITE_RADARR_URL%">Radarr</a>
+          <a href="%VITE_RADARR_URL%" target="_blank" referrerpolicy="no-referrer">Radarr</a>
         </li>
 
         <li>
           TV Shows:
-          <a href="%VITE_SONARR_URL%">Sonarr</a>
+          <a href="%VITE_SONARR_URL%" target="_blank" referrerpolicy="no-referrer">Sonarr</a>
         </li>
 
         <li>
           Subtitles:
-          <a href="%VITE_BAZARR_URL%">Bazarr</a>
+          <a href="%VITE_BAZARR_URL%" target="_blank" referrerpolicy="no-referrer">Bazarr</a>
         </li>
       </ul>
 
@@ -45,17 +46,17 @@
         <ul>
           <li>
             Torrent Client:
-            <a href="%VITE_QBIT_URL%">qBittorrent</a>
+            <a href="%VITE_QBIT_URL%" target="_blank" referrerpolicy="no-referrer">qBittorrent</a>
           </li>
 
           <li>
             Indexer:
-            <a href="%VITE_PROWLARR_URL%">Prowlarr</a>
+            <a href="%VITE_PROWLARR_URL%" target="_blank" referrerpolicy="no-referrer">Prowlarr</a>
           </li>
 
           <li>
             Captcha Solver:
-            <a href="%VITE_SOLVERR_URL%">FlareSolverr</a>
+            <a href="%VITE_SOLVERR_URL%" target="_blank" referrerpolicy="no-referrer">FlareSolverr</a>
           </li>
         </ul>
       </section>
@@ -73,7 +74,7 @@
         <div id="server-status-version"></div>
         <div id="server-status-players"></div>
         <div id="server-status-map">
-          <a href="%VITE_MCMAP_URL%" target="_blank" referrerpolicy="noreferrer">
+          <a href="%VITE_MCMAP_URL%" target="_blank" referrerpolicy="no-referrer">
             View Map
           </a>
         </div>
@@ -89,7 +90,7 @@
       <button id="server-start-button">
         Start Server
       </button>
-    <section>
+      <section>
   </main>
 
   <script type="module" src="./index.js"></script>
