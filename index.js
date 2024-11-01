@@ -16,6 +16,10 @@ ws.onopen = () => {
   checkServerStatus()
 };
 
+ws.onclose = () => {
+  serverStatusHandler.handleStatusError()
+}
+
 window.onload = async () => {
   dom.serverStatusButton.addEventListener("click", checkServerStatus)
   dom.serverStartButton.addEventListener("click", toggleServer)
