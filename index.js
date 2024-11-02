@@ -64,6 +64,7 @@ class ServerStatusHandler {
     dom.serverStatusText.innerText = "❌ Error checking server status"
     dom.serverStartButton.innerText = "Start Server"
     this._hideServerStatusDetails();
+    this._disableServerStartButton();
     this.online = false
   }
 
@@ -72,6 +73,7 @@ class ServerStatusHandler {
     dom.serverStatusText.innerText = "🔴 Server is not running"
     dom.serverStartButton.innerText = "Start Server"
     this._hideServerStatusDetails();
+    this._enableServerStartButton();
     this.online = false
   }
 
