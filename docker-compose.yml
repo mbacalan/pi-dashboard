@@ -13,3 +13,20 @@ services:
     ports:
       - "80:80"
     restart: unless-stopped
+  api:
+    build: .
+    container_name: dashboard-api
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Amsterdam
+      - NODE_ENV=production
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /home/mbacalan/games/minecraft:/app/minecraft
+    ports:
+      - "3001:3001"
+      - "25565:25565"
+    restart: unless-stopped
