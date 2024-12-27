@@ -1,6 +1,6 @@
-# Pi-Dashboard
+# Homelab Dashboard
 
-A straightforward dashboard for various services running on my RaspberryPi.  
+A straightforward dashboard for various services running on my homelab.  
 Apart from providing links to services, it is used to a start, stop and check the status of a Minecraft server.
 
 The API server is used to interact with the Minecraft server.  
