@@ -30,3 +30,5 @@ services:
       - "3001:3001"
       - "25565:25565"
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
